@@ -82,7 +82,7 @@ export function successfulLogin(options = {}) {
       // clear any previous JWT cookie
       res.clearCookie(options.cookie.name);
 
-      // Check HTTPS and cookie status in production 
+      // Check HTTPS and cookie status in production
       if (!req.secure && process.env.NODE_ENV === 'production' && options.cookie.secure) {
         console.warn('WARN: Request isn\'t served through HTTPS: JWT in the cookie is exposed.');
         console.info('If you are behind a proxy (e.g. NGINX) you can:');
@@ -104,10 +104,12 @@ export function successfulLogin(options = {}) {
       }
 
       res.cookie(options.cookie.name, res.data.token, cookieOptions);
+      // Redirect to our success route
+      res.redirect(options.successRedirect);
+    } else {
+      // Redirect to our success route with token in url
+      res.redirect(options.successRedirect+'#'+res.data.token);
     }
-
-    // Redirect to our success route
-    res.redirect(options.successRedirect);
   };
 }
 
